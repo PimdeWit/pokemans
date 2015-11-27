@@ -37,6 +37,7 @@ This project requires the following major dependencies:
 
 `sudo npm install -g gulp bower`
 
+
 - This lets you run `gulp` and `bower` from the command line.
 
 ---
