@@ -102,11 +102,11 @@ Pokemon.World.prototype.setTileSprite_ = function(type,
       break;
 
     case 'road':
-      this.createTile_(this.roadTile(subtype), x, y);
+      this.createTile_(this.roadTile_(subtype), x, y);
       break;
 
     case 'rock':
-      this.createTile_(this.rockTile(subtype), x, y);
+      this.createTile_(this.rockTile_(subtype), x, y);
       break;
   }
 };
@@ -130,6 +130,34 @@ Pokemon.World.prototype.waterTile_ = function(subtype) {
     /* Create a PIXI texture */
     texture = PIXI.Texture.fromImage(
         Pokemon.configAssets.WATERTILE + 'water_0.png');
+  }
+
+  /* Convert the texture into a PIXI sprite */
+  var sprite = new PIXI.Sprite(texture);
+
+  /* Returns sprite */
+  return sprite;
+};
+
+
+/**
+ *  Create main app background
+ *  @param {String} subtype Variation of sprite
+ *  @return {Object}
+ *  @private
+ */
+Pokemon.World.prototype.roadTile_ = function(subtype) {
+
+  var texture;
+
+  if (subtype) {
+    /* Create a PIXI texture */
+    texture = PIXI.Texture.fromImage(
+          Pokemon.configAssets.ROADTILE + subtype + '.png');
+  } else {
+    /* Create a PIXI texture */
+    texture = PIXI.Texture.fromImage(
+        Pokemon.configAssets.ROADTILE + 'road.png');
   }
 
   /* Convert the texture into a PIXI sprite */

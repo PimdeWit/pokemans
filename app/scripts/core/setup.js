@@ -1,5 +1,5 @@
 /**
- *  Generate the world.
+ *  Create a viewport, a renderer and a stage to append graphics to.
  *  @constructor
  */
 Pokemon.Setup = function() {

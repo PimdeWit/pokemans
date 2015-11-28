@@ -10,10 +10,12 @@ This project requires the following major dependencies:
 
 
 ***. Note: All commands `highlighted` are supposed to be executed inside the Command Prompt (or Terminal on Mac) .***
+***. Note 2: Command Prompt should be run with Admin .***
 
 **To install dependencies:**
 
 0) Install SASS [sass-lang.com](https://sass-lang.com/install)
+0.1) Install GIT [git-scm.com](https://git-scm.com/downloads)
 
 
 ---
@@ -29,13 +31,15 @@ This project requires the following major dependencies:
 
 2)  If you don't have Node.js installed, or you have a lower version, go to [nodejs.org](https://nodejs.org) and click on the big green Install button.
 
+2.1)  Update npm by entering the following: `npm update -g npm`
+
 
 ---
 
 
 3)  Install `gulp` and `bower` globally.
 
-`sudo npm install -g gulp bower`
+`npm install -g gulp bower`
 
 
 - This lets you run `gulp` and `bower` from the command line.
@@ -44,7 +48,7 @@ This project requires the following major dependencies:
 
 4)  Install the projects `npm` and `bower` dependencies.
 
-`cd path/to/pokemans && sudo npm install && bower install`
+`cd path/to/pokemans && npm install && bower install`
 
 
 
