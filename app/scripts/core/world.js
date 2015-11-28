@@ -5,7 +5,7 @@
 Pokemon.World = function() {
   Pokemon.logger('Pokemon.World');
 
-  this.map = null;
+  this.mapSize = 0;
 
   this.init();
 };
@@ -17,31 +17,30 @@ Pokemon.World = function() {
 Pokemon.World.prototype.init = function() {
   Pokemon.logger('World initialised');
 
-  // this.setTile('water', 0, 0);
-  // this.setTile('water', 1, 0);
-  // this.setTile('water', 0, 1);
-
+  /* Read a JSON file to generate a map */
   this.createMap('testlevel');
-  // Kick off the animation loop.
+
+  /* Kick off the animation loop */
   this.animate();
 };
 
 
 /**
  *  Load a JSON file which defines a tileset + attributes for a map.
- * @param {String} callback
+ *  @param {String} maptitle
+ *  @param {String} callback
  */
 Pokemon.World.prototype.getMapData = function(maptitle, callback) {
-  // Make a request for a JSON file.
+  /* Make a request for a JSON file */
   var xobj = new XMLHttpRequest();
       xobj.overrideMimeType('application/json');
 
-  // GET the JSON file.
+  /* GET the JSON file */
   xobj.open('GET',
     Pokemon.configAssets.MAPS + maptitle + '/' + maptitle + '.json',
     true);
 
-  // Send the data to our app's scope once the JSON has been loaded.
+  /* Send the data to our app's scope once the JSON has been loaded */
   xobj.onreadystatechange = function() {
     if (xobj.readyState == 4 && xobj.status == '200') {
       callback(xobj.responseText);
@@ -61,7 +60,7 @@ Pokemon.World.prototype.createMap = function(maptitle) {
   this.getMapData(maptitle, function(response) {
     var data = JSON.parse(response);
 
-    self.defineTiles(data);
+    self.defineTiles_(data);
   });
 };
 
@@ -69,37 +68,45 @@ Pokemon.World.prototype.createMap = function(maptitle) {
 /**
  *  Parse the map data.
  *  @param {String} data Data object from the JSON file.
+ *  @private
  */
-Pokemon.World.prototype.defineTiles = function(data) {
+Pokemon.World.prototype.defineTiles_ = function(data) {
   var self = this;
-
   data.forEach(function(tile) {
-    var type = tile.type;
-    var x = tile.pos_x;
-    var y = tile.pos_y;
-    var wall = tile.wall;
-    var encounter = true;
-
-    self.setTile(type, x, y);
+    self.setTileSprite_(
+        tile.type,
+        tile.subtype,
+        tile.x,
+        tile.y,
+        tile.wall,
+        tile.encounter);
   });
 };
 
 
 /**
- *  @param {String} type Options: 'water', 'road' & 'rock'
+ *  @param {String} type Options: 'water', 'road' & 'rock'.
+ *  @param {String} subtype Every type may have up to 4 variations.
  *  @param {Number} x The X position of the tile.
  *  @param {Number} y The Y position of the tile.
+ *  @param {Boolean} wall Can the user navigate to this tile?
+ *  @param {Boolean} encounter Are there encounters on this tile?
+ *  @private
  */
-Pokemon.World.prototype.setTile = function(type, x, y) {
+Pokemon.World.prototype.setTileSprite_ = function(type,
+    subtype, x, y, wall, encounter) {
+
   switch (type) {
     case 'water':
-      this.createTile_(this.waterTile(), x, y);
+      this.createTile_(this.waterTile_(subtype), x, y);
       break;
+
     case 'road':
-      this.createTile_(this.roadTile(), x, y);
+      this.createTile_(this.roadTile(subtype), x, y);
       break;
+
     case 'rock':
-      this.createTile_(this.rockTile(), x, y);
+      this.createTile_(this.rockTile(subtype), x, y);
       break;
   }
 };
@@ -107,16 +114,28 @@ Pokemon.World.prototype.setTile = function(type, x, y) {
 
 /**
  *  Create main app background
+ *  @param {String} subtype Variation of sprite
  *  @return {Object}
+ *  @private
  */
-Pokemon.World.prototype.waterTile = function() {
-  // Create a PIXI texture.
-  var texture = PIXI.Texture.fromImage(Pokemon.configAssets.WATERTILE);
+Pokemon.World.prototype.waterTile_ = function(subtype) {
 
-  // Convert the texture into a PIXI sprite.
+  var texture;
+
+  if (subtype) {
+    /* Create a PIXI texture */
+    texture = PIXI.Texture.fromImage(
+          Pokemon.configAssets.WATERTILE + subtype + '.png');
+  } else {
+    /* Create a PIXI texture */
+    texture = PIXI.Texture.fromImage(
+        Pokemon.configAssets.WATERTILE + 'water_0.png');
+  }
+
+  /* Convert the texture into a PIXI sprite */
   var sprite = new PIXI.Sprite(texture);
 
-  // Returns sprite.
+  /* Returns sprite */
   return sprite;
 };
 
@@ -131,13 +150,13 @@ Pokemon.World.prototype.waterTile = function() {
 Pokemon.World.prototype.createTile_ = function(tile, x, y) {
   Pokemon.logger('Preparing tile on position: x' + x + ' y' + y);
 
-  // Set tile size.
+  /* Set tile size */
   this.setSize_(tile, x, y);
 
-  // Set tile position.
+  /* Set tile position */
   this.setPosition_(tile, x, y);
 
-  // Add the tile to the scene.
+  /* Add the tile to the scene */
   Pokemon.configCore.STAGE.addChild(tile);
 };
 
@@ -148,10 +167,10 @@ Pokemon.World.prototype.createTile_ = function(tile, x, y) {
  *  @private
  */
 Pokemon.World.prototype.setSize_ = function(tile) {
-  // Sets the tile width equal to the parameter in the config.
+  /* Sets the tile width equal to the parameter in the config */
   tile.width = Pokemon.configTiling.TILESIZE;
 
-  // Sets the tile height equal to the parameter in the config.
+  /* Sets the tile height equal to the parameter in the config */
   tile.height = Pokemon.configTiling.TILESIZE;
 };
 
@@ -164,7 +183,7 @@ Pokemon.World.prototype.setSize_ = function(tile) {
  *  @private
  */
 Pokemon.World.prototype.setPosition_ = function(tile, x, y) {
-  // Sets the tile location. 1 equals whatever paremeter the tile config gives.
+  /* Sets the tile location. "1" equals to tiling config parameters */
   tile.position.x = x * Pokemon.configTiling.TILESIZE;
   tile.position.y = y * Pokemon.configTiling.TILESIZE;
 };
@@ -174,6 +193,10 @@ Pokemon.World.prototype.setPosition_ = function(tile, x, y) {
  *  Re-render the scene every frame to update possible changes to the scene.
  */
 Pokemon.World.prototype.animate = function() {
+
+  /* Make sure a frame has passed before looping again */
   requestAnimationFrame(this.animate.bind(this));
+
+  /* (re-)Render the stage. */
   Pokemon.configCore.RENDERER.render(Pokemon.configCore.STAGE);
 };

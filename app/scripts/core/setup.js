@@ -9,6 +9,7 @@ Pokemon.Setup = function() {
   /* Object */
   this.stage = null;
 
+  /* Initialise Setup */
   this.init();
 };
 
@@ -31,6 +32,7 @@ Pokemon.Setup.prototype.init = function() {
 Pokemon.Setup.prototype.createRenderer = function() {
   Pokemon.logger('Setting up PIXI renderer');
 
+  /* WebGLRenderer for fast rendering. */
   this.renderer = new PIXI.WebGLRenderer(Pokemon.configCore.WIDTH,
       Pokemon.configCore.HEIGHT, {
     backgroundColor: Pokemon.configRenderer.BACKGROUND,
@@ -38,6 +40,7 @@ Pokemon.Setup.prototype.createRenderer = function() {
     antialias: Pokemon.configRenderer.ANTIALIAS
   });
 
+  /* Scale mode to "Nearest" for pixelated (non-aliased) scaling. */
   PIXI.SCALE_MODES.DEFAULT = PIXI.SCALE_MODES.NEAREST;
 
   /* Pass this.stage to global scope */
@@ -51,6 +54,7 @@ Pokemon.Setup.prototype.createRenderer = function() {
 Pokemon.Setup.prototype.createStage = function() {
   Pokemon.logger('Setting up PIXI stage');
 
+  /* New PIXI stage */
   this.stage = new PIXI.Container();
 
   /* Pass this.stage to global scope */
@@ -64,6 +68,7 @@ Pokemon.Setup.prototype.createStage = function() {
 Pokemon.Setup.prototype.appendViewport = function() {
   Pokemon.logger('Appending stage to DOM');
 
+  // Append our viewport to the DOM.
   document.body.appendChild(Pokemon.configCore.RENDERER.view);
 };
 

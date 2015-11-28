@@ -3,5 +3,5 @@
  */
 Pokemon.configAssets = {
   MAPS: 'scripts/maps/',
-  WATERTILE: 'images/tiles/water/water_0.png'
+  WATERTILE: 'images/tiles/water/'
 };
