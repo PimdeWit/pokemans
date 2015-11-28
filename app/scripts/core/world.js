@@ -1,12 +1,9 @@
-var Pokemon = Pokemon || {};
-
 /**
  *  Generate the world.
  *  @constructor
  */
-Pokemon.Build = function() {
-  Pokemon.logger('------------------------');
-  Pokemon.logger('Pokemon.Build');
+Pokemon.World = function() {
+  Pokemon.logger('Pokemon.World');
 
 
   this.init();
@@ -14,17 +11,17 @@ Pokemon.Build = function() {
 
 
 /**
- *  Build init.
+ *  World init.
  */
-Pokemon.Build.prototype.init = function() {
-  Pokemon.logger('Build initialised');
+Pokemon.World.prototype.init = function() {
+  Pokemon.logger('World initialised');
 
   this.setTile('water', 0, 0);
   this.setTile('water', 1, 0);
   this.setTile('water', 0, 1);
 
 
-  // kick off the animation loop (defined below)
+  // Kick off the animation loop.
   this.animate();
 };
 
@@ -34,7 +31,7 @@ Pokemon.Build.prototype.init = function() {
  *  @param {Number} x The X position of the tile.
  *  @param {Number} y The Y position of the tile.
  */
-Pokemon.Build.prototype.setTile = function(type, x, y) {
+Pokemon.World.prototype.setTile = function(type, x, y) {
   switch (type) {
     case 'water':
       this.createTile_(this.waterTile(), x, y);
@@ -53,8 +50,8 @@ Pokemon.Build.prototype.setTile = function(type, x, y) {
  *  Create main app background
  *  @return {Object}
  */
-Pokemon.Build.prototype.waterTile = function() {
-  var texture = PIXI.Texture.fromImage(Pokemon.cfgAssets.WATERTILE);
+Pokemon.World.prototype.waterTile = function() {
+  var texture = PIXI.Texture.fromImage(Pokemon.configAssets.WATERTILE);
   var sprite = new PIXI.Sprite(texture);
   return sprite;
 };
@@ -67,8 +64,8 @@ Pokemon.Build.prototype.waterTile = function() {
  *  @param {Number} y The Y position of the tile.
  *  @private
  */
-Pokemon.Build.prototype.createTile_ = function(tile, x, y) {
-  Pokemon.logger('Creating tile on position: x' + x + ' y' + y);
+Pokemon.World.prototype.createTile_ = function(tile, x, y) {
+  Pokemon.logger('Preparing tile on position: x' + x + ' y' + y);
 
   // Set tile size.
   this.setSize_(tile, x, y);
@@ -76,8 +73,8 @@ Pokemon.Build.prototype.createTile_ = function(tile, x, y) {
   // Set tile position.
   this.setPosition_(tile, x, y);
 
-  // Add the bunny to the scene we are building.
-  Pokemon.cfgCore.STAGE.addChild(tile);
+  // Add the tile to the scene.
+  Pokemon.configCore.STAGE.addChild(tile);
 };
 
 /**
@@ -85,9 +82,9 @@ Pokemon.Build.prototype.createTile_ = function(tile, x, y) {
  *  @param {Object} tile The tile that gets resized/scaled.
  *  @private
  */
-Pokemon.Build.prototype.setSize_ = function(tile) {
-  tile.width = Pokemon.cfgBuild.TILESIZE;
-  tile.height = Pokemon.cfgBuild.TILESIZE;
+Pokemon.World.prototype.setSize_ = function(tile) {
+  tile.width = Pokemon.configTiling.TILESIZE;
+  tile.height = Pokemon.configTiling.TILESIZE;
 };
 
 
@@ -98,9 +95,9 @@ Pokemon.Build.prototype.setSize_ = function(tile) {
  *  @param {Number} y The Y position of the tile.
  *  @private
  */
-Pokemon.Build.prototype.setPosition_ = function(tile, x, y) {
-  tile.position.x = x * Pokemon.cfgBuild.TILESIZE;
-  tile.position.y = y * Pokemon.cfgBuild.TILESIZE;
+Pokemon.World.prototype.setPosition_ = function(tile, x, y) {
+  tile.position.x = x * Pokemon.configTiling.TILESIZE;
+  tile.position.y = y * Pokemon.configTiling.TILESIZE;
 };
 
 
@@ -108,10 +105,9 @@ Pokemon.Build.prototype.setPosition_ = function(tile, x, y) {
  *  Background Animation.
  *
  */
-Pokemon.Build.prototype.animate = function() {
+Pokemon.World.prototype.animate = function() {
   var self = this;
 
   requestAnimationFrame(this.animate.bind(this));
-  Pokemon.cfgCore.RENDERER.render(Pokemon.cfgCore.STAGE);
+  Pokemon.configCore.RENDERER.render(Pokemon.configCore.STAGE);
 };
-
