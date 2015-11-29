@@ -3,6 +3,8 @@
  *  @constructor
  */
 Pokemon.Setup = function() {
+  Pokemon.logger('');
+  Pokemon.logger('Pokemon.Setup');
   /* Object */
   this.renderer = null;
 
@@ -18,7 +20,7 @@ Pokemon.Setup = function() {
  *  Set up the main components to render the app.
  */
 Pokemon.Setup.prototype.init = function() {
-  Pokemon.logger('Pokemon initialised');
+  Pokemon.logger('Setup initialised');
 
   this.createRenderer();
   this.createStage();

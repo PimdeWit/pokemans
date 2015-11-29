@@ -1,0 +1,242 @@
+// -----------------------------------------------------------------------------
+// This file contains all application-wide Sass mixins.
+// -----------------------------------------------------------------------------
+
+/// Event wrapper
+/// @author Harry Roberts
+/// @param {Bool} $self [false] - Whether or not to include current selector
+/// @link https://twitter.com/csswizardry/status/478938530342006784 Original tweet from Harry Roberts
+@mixin on-event($self: false) {
+  @if $self {
+    &,
+    &:hover,
+    &:active,
+    &:focus {
+      @content;
+    }
+  } @else {
+    &:hover,
+    &:active,
+    &:focus {
+      @content;
+    }
+  }
+}
+
+/// Make a context based selector a little more friendly
+/// @author Hugo Giraudel
+/// @param {String} $context
+@mixin when-inside($context) {
+  #{$context} & {
+    @content;
+  }
+}
+
+/// Responsive manager
+/// Media queries based on sizes from Bootstrap
+@mixin mq($media-query) {
+  @if $media-query == mobile {
+    @media only screen and (max-width: 480px) {
+      @content;
+    }
+  }
+  
+  @if $media-query == tablet {
+    @media only screen and (max-width: 768px) {
+      @content;
+    }
+  }
+
+  @if $media-query == desktop-small {
+    @media only screen and (max-width: 960px) {
+      @content;
+    }
+  }
+
+  @if $media-query == desktop {
+    @media only screen and (max-width: 1280px) {
+      @content;
+    }
+  }
+}
+
+/// Example Usage
+.testMobile-Only {
+  display: none;
+
+  @include mq(md) {
+    display: block;
+  }
+}
+
+/// Typography
+
+$breakpoints: (
+  sm: 768px,
+  md: 992px,
+  lg: 1200px
+);
+
+/// Function to easily streamline typography with brand guidelines
+/// Example below
+@mixin font-size($fs-map, $fs-breakpoints: $breakpoints) {
+  @each $fs-breakpoint, $fs-font-size in $fs-map {
+    @if $fs-breakpoint == null {
+      @include make-font-size($fs-font-size);
+    }
+    @else {
+      @if map-has-key($fs-breakpoints, $fs-breakpoint) {
+        $fs-breakpoint: map-get($fs-breakpoints, $fs-breakpoint);
+      }
+      @media screen and (min-width: $fs-breakpoint) {
+        @include make-font-size($fs-font-size);
+      }
+    }
+  }
+}
+
+@mixin make-font-size($fs-font-size) {
+  @if type-of($fs-font-size) == "list" {
+    font-size: nth($fs-font-size, 1);
+    @if (length($fs-font-size) > 1) {
+      line-height: nth($fs-font-size, 2);
+    }
+  }
+  @else { font-size: $fs-font-size; }
+}
+
+/// Example Usage
+$test-font-sizes: (
+  null: (1em, 1.2), // Null = default styles.
+  sm: (1em, 1.3), // sm, md, lg, etc = bootstrap responsive breakpoints
+  md: (1.325em, 1.5), // First parameter (1em) = font-size
+  lg: (1.8em, 1.7) // Second parameter (1.7) = line-height
+);
+
+p.test {
+  @include font-size($test-font-sizes);
+}
+
+/// Set a category of colours (grey)
+/// Then create a shorthand for a colour
+$palettes: (
+  grey: (
+    lighter: #fbfcfe,
+    light: #e2e3e5,
+    base:  #676a6f,
+    dark: #212223,
+    darker: #181819
+  )
+);
+
+/// Create a sass map that gets the colours
+@function palette($palette, $tone: 'base') {
+  @return map-get(map-get($palettes, $palette), $tone);
+}
+
+// Example usage
+.testColour {
+  background-color: palette(grey, dark); // results in '#212223';
+}
+
+// -----------------------------------------------------------------------------
+
+// SVG background fallback
+// If you are using SVG, make sure you have the same graphics in
+// PNG format with the same filename for fallback on unsupported browsers //
+// SVG will get replaced by a PNG (with the same filename)
+$image-path: '../img' !default;
+$fallback-extension: 'png' !default;
+$retina-suffix: '@2x';
+@mixin background-image($name, $size:false){
+  background-image: url(#{$image-path}/#{$name}.svg);
+  @if($size){ background-size: $size; }
+  .no-svg &{
+    background-image: url(#{$image-path}/#{$name}.#{$fallback-extension});
+    @media only screen and (-moz-min-device-pixel-ratio: 1.5),
+           only screen and (-o-min-device-pixel-ratio: 3/2),
+           only screen and (-webkit-min-device-pixel-ratio: 1.5),
+           only screen and (min-device-pixel-ratio: 1.5) {
+      background-image: url(#{$image-path}/#{$name}#{$retina-suffix}.#{$fallback-extension});
+    }
+  }
+}
+
+// Example Usage
+figure.testSVG {
+  @include background-image('pattern');
+}
+
+
+
+//============================================================
+//
+// Easing
+//
+// Thanks to Robert Penner for his sterling work on easing,
+// and to Matthew Lein for converting these functions into
+// approximated cubic-bezier functions. Respect.
+//
+// @see http://robertpenner.com/
+// @see http://matthewlein.com/ceaser/
+//
+//============================================================
+
+// Cubic
+$easeInCubic     :  cubic-bezier(0.550, 0.055, 0.675, 0.190);
+$easeOutCubic    :  cubic-bezier(0.215, 0.610, 0.355, 1.000);
+$easeInOutCubic  :  cubic-bezier(0.645, 0.045, 0.355, 1.000);
+
+// Circ
+$easeInCirc      :  cubic-bezier(0.600, 0.040, 0.980, 0.335);
+$easeOutCirc     :  cubic-bezier(0.075, 0.820, 0.165, 1.000);
+$easeInOutCirc   :  cubic-bezier(0.785, 0.135, 0.150, 0.860);
+
+// Expo
+$easeInExpo      :  cubic-bezier(0.950, 0.050, 0.795, 0.035);
+$easeOutExpo     :  cubic-bezier(0.190, 1.000, 0.220, 1.000);
+$easeInOutExpo   :  cubic-bezier(1.000, 0.000, 0.000, 1.000);
+
+// Quad
+$easeInQuad      :  cubic-bezier(0.550, 0.085, 0.680, 0.530);
+$easeOutQuad     :  cubic-bezier(0.250, 0.460, 0.450, 0.940);
+$easeInOutQuad   :  cubic-bezier(0.455, 0.030, 0.515, 0.955);
+
+// Quart
+$easeInQuart     :  cubic-bezier(0.895, 0.030, 0.685, 0.220);
+$easeOutQuart    :  cubic-bezier(0.165, 0.840, 0.440, 1.000);
+$easeInOutQuart  :  cubic-bezier(0.770, 0.000, 0.175, 1.000);
+
+// Quint
+$easeInQuint     :  cubic-bezier(0.755, 0.050, 0.855, 0.060);
+$easeOutQuint    :  cubic-bezier(0.230, 1.000, 0.320, 1.000);
+$easeInOutQuint  :  cubic-bezier(0.860, 0.000, 0.070, 1.000);
+
+// Sine
+$easeInSine      :  cubic-bezier(0.470, 0.000, 0.745, 0.715);
+$easeOutSine     :  cubic-bezier(0.390, 0.575, 0.565, 1.000);
+$easeInOutSine   :  cubic-bezier(0.445, 0.050, 0.550, 0.950);
+
+// Back
+$easeInBack      :  cubic-bezier(0.600, -0.280, 0.735, 0.045);
+$easeOutBack     :  cubic-bezier(0.175,  0.885, 0.320, 1.275);
+$easeInOutBack   :  cubic-bezier(0.680, -0.550, 0.265, 1.550);
+
+
+
+
+
+
+%flex-center {
+  @include align-items(center);
+  @include display(flex);
+  @include flex-direction(row);
+  @include justify-content(center);
+}
+
+%flex-vertical {
+  @include align-items(center);
+  @include display(flex);
+  @include flex-direction(column);
+  @include justify-content(flex-start);
+}

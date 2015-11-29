@@ -16,6 +16,7 @@ This project requires the following major dependencies:
 
 0) Install SASS [sass-lang.com](https://sass-lang.com/install)
 0.1) Install GIT [git-scm.com](https://git-scm.com/downloads)
+0.2) Install Python 2.7.0 
 
 
 ---

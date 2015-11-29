@@ -28,7 +28,36 @@
     <!--[if lt IE 10]>
       <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
-    
+
+
+
+
+    <div id="character-creation" class="character-creation">
+      <div class="character-creation--background">
+        <div class="character-creation--viewport">
+          <header>
+            <h1>Create your character!</h1>
+          </header>
+
+          <section>
+            <h3>Are you a boy or a girl?</h3>
+
+            <form action="">
+              <label for="boy">Boy</label>
+              <input type="radio" id="boy">
+
+              <label for="grill">Grill</label>
+              <input type="radio" id="grill">
+            </form>
+          </section>
+
+          <footer>
+            <button><span>I'm ready!</span></button>
+          </footer>
+        </div>
+      </div>
+
+    </div>
     
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
     <script>
@@ -53,11 +82,14 @@
     <script src="scripts/config/cfg-renderer.js"></script>
     <script src="scripts/config/cfg-world.js"></script>
     <script src="scripts/config/cfg-assets.js"></script>
+    <script src="scripts/config/cfg-character.js"></script>
 
     <!-- Core functionalities -->
     <script src="scripts/core/logger.js"></script>
     <script src="scripts/core/setup.js"></script>
     <script src="scripts/core/world.js"></script>
+
+    <script src="scripts/character/character.js"></script>
     <!-- endbuild -->
   </body>
 </html>

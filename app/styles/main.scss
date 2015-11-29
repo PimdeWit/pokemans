@@ -1,13 +1,26 @@
 // bower:scss
 // endbower
 
-body {
-  background: #fafafa;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-}
+@charset 'UTF-8';
 
-canvas {
-  display: block;
-}
+// 1. Third party libraries.
+@import
+  'third-party/normalize/normalize',
+  'third-party/bourbon/bourbon';
+
+// 2. Configuration and helpers
+@import
+  'utils/variables',
+  'utils/functions',
+  'utils/mixins';
+
+// 3. Base styles
+@import
+  'base/base',
+  'base/helpers',
+  'base/fonts',
+  'base/typography';
+
+// 4. Modules
+@import
+  'modules/character-creation';

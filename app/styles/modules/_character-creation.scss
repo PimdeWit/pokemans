@@ -1,0 +1,50 @@
+/* Character creation module */
+
+$character-creation-easing: $easeInOutCubic;
+
+.character-creation {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+
+  z-index: 1;
+  visibility: hidden;
+
+  &.open {
+    visibility: visible;
+  }
+}
+
+
+.character-creation--background {
+  @extend %flex-center;
+  @include transition(.4s opacity $character-creation-easing);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+
+  opacity: 0;
+  background: rgba(0, 0, 0, .85);
+
+  .open & {
+    opacity: 1;
+  }
+}
+
+.character-creation--viewport {
+  @extend %flex-vertical;
+  @include transition(.6s transform .3s $character-creation-easing,
+                      .6s opacity .3s $easeInOutCubic);
+  @include transform(scale(0.9));
+
+  width: 80vw;
+  height: 80vh;
+  
+  opacity: 0;
+  background: #f2f3f4;
+
+  .open & {
+    @include transform(translate3d(0, 0, 0));
+    opacity: 1;
+  }
+}

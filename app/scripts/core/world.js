@@ -3,9 +3,11 @@
  *  @constructor
  */
 Pokemon.World = function() {
+  Pokemon.logger('');
   Pokemon.logger('Pokemon.World');
 
-  this.mapSize = 0;
+  this.mapWidth = 0;
+  this.mapHeight = 0;
 
   this.init();
 };
@@ -184,6 +186,9 @@ Pokemon.World.prototype.createTile_ = function(tile, x, y) {
   /* Set tile position */
   this.setPosition_(tile, x, y);
 
+  this.updateMapSize_(x, y);
+
+  Pokemon.logger('Adding tile to scene');
   /* Add the tile to the scene */
   Pokemon.configCore.STAGE.addChild(tile);
 };
@@ -214,6 +219,35 @@ Pokemon.World.prototype.setPosition_ = function(tile, x, y) {
   /* Sets the tile location. "1" equals to tiling config parameters */
   tile.position.x = x * Pokemon.configTiling.TILESIZE;
   tile.position.y = y * Pokemon.configTiling.TILESIZE;
+};
+
+
+/**
+ *  Calculate the map total width & height.
+ *  @param {Number} x The horizontal size of a tile.
+ *  @param {Number} y The vertical size of a tile.
+ *  @private
+ */
+Pokemon.World.prototype.updateMapSize_ = function(x, y) {
+
+  /* Update total map width */
+  this.mapWidth = parseInt(x) * Pokemon.configTiling.TILESIZE;
+
+  /* Update total map height */
+  this.mapHeight = parseInt(y) * Pokemon.configTiling.TILESIZE;
+
+  this.centerMap_(this.mapWidth, this.mapHeight);
+};
+
+
+/**
+ *  Center the map.
+ *  @param {Number} width The total width of the current map.
+ *  @param {Number} height The total Height of the current map.
+ *  @private
+ */
+Pokemon.World.prototype.centerMap_ = function(width, height) {
+  // TODO
 };
 
 

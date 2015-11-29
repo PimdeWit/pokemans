@@ -21,6 +21,7 @@ Pokemon.prototype.init = function() {
 
   this.setup();
   this.generateWorld();
+  this.createCharacter();
 };
 
 
@@ -37,6 +38,14 @@ Pokemon.prototype.setup = function() {
  */
 Pokemon.prototype.generateWorld = function() {
   new Pokemon.World;
+};
+
+
+/**
+ * Generate a map with the help of tiles.
+ */
+Pokemon.prototype.createCharacter = function() {
+  new Pokemon.Character;
 };
 
 /**
