@@ -1,0 +1,25 @@
+{
+  "name": "pokemans",
+  "version": "0.0.1",
+  "description": "Recreating pokemon for fun",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PimdeWit/pokemans.git"
+  },
+  "keywords": [
+    "pokemon",
+    "javascript",
+    "es6",
+    "redux"
+  ],
+  "author": "Pim de Wit",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PimdeWit/pokemans/issues"
+  },
+  "homepage": "https://github.com/PimdeWit/pokemans#readme"
+}
