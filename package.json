@@ -2,10 +2,10 @@
   "name": "pokemans",
   "version": "0.0.1",
   "description": "Recreating pokemon for fun",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "./node_modules/.bin/webpack-dev-server --inline --content-base app"
+    "start": "./node_modules/.bin/webpack-dev-server --inline --content-base src"
   },
   "repository": {
     "type": "git",
@@ -25,6 +25,7 @@
   "homepage": "https://github.com/PimdeWit/pokemans#readme",
   "dependencies": {
     "babel-loader": "^6.2.8",
+    "pixi.js": "^4.2.3",
     "redux": "^3.6.0",
     "webpack": "^1.13.3"
   },
