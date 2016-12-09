@@ -25,8 +25,9 @@ class Pokemans {
 
     setTimeout(() => {
       this.mapController.tiles.forEach(tile =>  {
-        this.game.stage.addChild(tile.sprite);
+        this.game.stage.add.sprite(tile.sprite);
       });
+      console.log(this.game.stage);
     }, 128);
   }
 

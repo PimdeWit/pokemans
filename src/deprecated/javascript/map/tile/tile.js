@@ -16,23 +16,27 @@ class Tile {
   _createGraphic() {
     let texture;
 
-    if (this._tileObject.animated) {
-      this._sprite = this._createMovieClip();
-      this._sprite.animationSpeed = TileConfig.ANIMATION_SPEED;
-      this._sprite.play();
+    // if (this._tileObject.animated) {
+    //   this._sprite = this._createMovieClip();
+    //   this._sprite.animationSpeed = TileConfig.ANIMATION_SPEED;
+    //   this._sprite.play();
 
-      this._sprite = this.game.load.spritesheet('mummy', 'assets/sprites/metalslug_mummy37x45.png', 37, 45, 18);
-    } else {
+    //   this._sprite = this.game.load.spritesheet('mummy', 'assets/sprites/metalslug_mummy37x45.png', 37, 45, 18);
+    // } else {
+    //   let texture = `${TileConfig.PATH}${this._tileObject.type}/${this._tileObject.type}_0.png`;
+    //   this._sprite = this.game.load.image('spritesheet', texture);
+    // }
+
+    if (!this._tileObject.animated) {
       let texture = `${TileConfig.PATH}${this._tileObject.type}/${this._tileObject.type}_0.png`;
       this._sprite = this.game.load.image('spritesheet', texture);
     }
 
-    console.log(this._sprite);
+    // this.game.load.image('splash-title', './assets/splash/title.png');
 
-    this.game.load.image('splash-title', './assets/splash/title.png');
-    console.log(a);
-
-    // this._setSpriteSettings();
+    if (this._sprite) {
+      this._setSpriteSettings();
+    }
   }
 
   _createMovieClip() {
