@@ -1,8 +1,8 @@
 import {MAP_LOADED} from '../actions';
 import Tile from './tile/tile.js';
 
-let MapConfig = {
-  TILESIZE: 32,
+const MapConfig = {
+  TILESIZE: 64,
   TEXTURE_PATH: '/assets/data/maps/'
 };
 
@@ -11,7 +11,6 @@ class MapController {
     this.canvas = canvas;
     this.tileArray = [];
   }
-
 
   setCurrentMap(maptitle) {
     this.getMapData(maptitle);

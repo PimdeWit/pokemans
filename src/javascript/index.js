@@ -1,6 +1,5 @@
 import * as PIXI from 'pixi.js';
-PIXI.utils.skipHello();
-PIXI.settings.SCALE_MODE = PIXI.settings.SCALE_MODE.NEAREST;
+
 import store from './store';
 import Pokemans from './core/core.js';
 
@@ -11,10 +10,12 @@ const getState = () => {
 };
 
 window.onload = function() {
+  PIXI.utils.skipHello();
+  PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
+
   document.body.style.margin = 0;
   document.body.style.minHeight = '100vh';
   let app = new Pokemans(document.body);
-  app.addEventListeners();
 
   getState();
   store.subscribe(getState);

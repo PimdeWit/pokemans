@@ -1,8 +1,9 @@
-let initialCanvas = {
+const initialCanvas = {
   WIDTH: 800,
   HEIGHT: 600,
+  AUTORESIZE: false,
   ANTIALIAS: true,
-  TRANSPARENT: false,
+  TRANSPARENT: true,
   ROUND_PIXELS: true,
   BACKGROUND: 0xff0000
 }
@@ -25,6 +26,7 @@ class Canvas {
         initialCanvas.WIDTH,
         initialCanvas.HEIGHT,
         {
+          autoResize: initialCanvas.AUTORESIZE,
           transparent: initialCanvas.TRANSPARENT,
           antialias: initialCanvas.ANTIALIAS,
           roundPixels: initialCanvas.ROUND_PIXELS
@@ -41,14 +43,6 @@ class Canvas {
   /**
    * ---------------------------
    */
-
-  set width(value) {
-    this._element.width = value;
-  }
-
-  set height(value) {
-    this._element.height = value;
-  }
 
   get element() {
     return this._element;

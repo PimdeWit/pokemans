@@ -1,3 +1,9 @@
+const TileConfig = {
+  FRAME_AMOUNT: 8,
+  ANIMATION_SPEED: 0.05,
+  PATH: 'assets/textures/tiles/'
+};
+
 class Tile {
   constructor(tile) {
     this._sprite = null;
@@ -7,11 +13,28 @@ class Tile {
   }
 
   _createGraphic() {
-    let texture = PIXI.Texture.fromImage('/assets/textures/tiles/' + this._tileObject.type + '/' + this._tileObject.type + '_0.png');
+    let texture;
 
-    this._sprite = new PIXI.Sprite(texture);
+    if (this._tileObject.animated) {
+      this._sprite = this._createMovieClip();
+      this._sprite.animationSpeed = TileConfig.ANIMATION_SPEED;
+      this._sprite.play();
+    } else {
+      let texture = PIXI.Texture.fromImage(`${TileConfig.PATH}${this._tileObject.type}/${this._tileObject.type}_0.png`)
+      this._sprite = new PIXI.Sprite(texture);
+    }
 
     this._setSpriteSettings();
+  }
+
+  _createMovieClip() {
+    let frames = [];
+
+    for (var i = TileConfig.FRAME_AMOUNT - 1; i >= 0; i--) {
+      frames.push(PIXI.Texture.fromImage(`assets/textures/tiles/${this._tileObject.type}/${this._tileObject.type}_${i}.png`));
+    }
+
+    return new PIXI.extras.AnimatedSprite(frames);
   }
 
   _setSpriteSettings() {
