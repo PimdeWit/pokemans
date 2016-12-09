@@ -5,9 +5,10 @@ const TileConfig = {
 };
 
 class Tile {
-  constructor(tile) {
+  constructor(game, tile) {
     this._sprite = null;
     this._tileObject = tile;
+    this.game = game;
 
     this._createGraphic();
   }
@@ -19,12 +20,19 @@ class Tile {
       this._sprite = this._createMovieClip();
       this._sprite.animationSpeed = TileConfig.ANIMATION_SPEED;
       this._sprite.play();
+
+      this._sprite = this.game.load.spritesheet('mummy', 'assets/sprites/metalslug_mummy37x45.png', 37, 45, 18);
     } else {
-      let texture = PIXI.Texture.fromImage(`${TileConfig.PATH}${this._tileObject.type}/${this._tileObject.type}_0.png`)
-      this._sprite = new PIXI.Sprite(texture);
+      let texture = `${TileConfig.PATH}${this._tileObject.type}/${this._tileObject.type}_0.png`;
+      this._sprite = this.game.load.image('spritesheet', texture);
     }
 
-    this._setSpriteSettings();
+    console.log(this._sprite);
+
+    this.game.load.image('splash-title', './assets/splash/title.png');
+    console.log(a);
+
+    // this._setSpriteSettings();
   }
 
   _createMovieClip() {

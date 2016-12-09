@@ -1,44 +1,42 @@
-import Canvas from './canvas.js';
+import Game from './game.js';
 import MapController from '../map/mapController.js';
+
+const initialGame = {
+  WIDTH: '100',
+  HEIGHT: '100',
+  AUTORESIZE: false,
+  ANTIALIAS: true,
+  TRANSPARENT: false,
+  ROUND_PIXELS: true,
+  BACKGROUND: 0xff0000
+};
+
 
 class Pokemans {
   constructor(parent) {
-    this.canvas = new Canvas(parent);
-    this.resize();
+    this.game = new Game(parent);
 
-    this.mapController = new MapController(this.canvas);
+    this.mapController = new MapController(this.game);
     this.mapController.setCurrentMap('testlevel');
 
     this.addEventListeners();
 
-    this.animate();
+    // this.animate();
 
     setTimeout(() => {
       this.mapController.tiles.forEach(tile =>  {
-        this.canvas.stage.addChild(tile.sprite);
+        this.game.stage.addChild(tile.sprite);
       });
-
-      this.render();
     }, 128);
   }
 
   addEventListeners() {
-    window.addEventListener('resize', event => this.resize());
+    window.addEventListener('resize', () => this.resize());
   }
 
-  resize(width = this.canvas.element.parentNode.clientWidth,
-         height = this.canvas.element.parentNode.clientHeight) {
-    this.canvas.renderer.resize(width, height);
-    this.render();
-  }
-
-  animate() {
-    requestAnimationFrame(this.animate.bind(this));
-    this.render();
-  }
-
-  render() {
-    this.canvas.renderer.render(this.canvas.stage);
+  resize(width = 800,
+         height = 600) {
+    this.game.stage.scale.setGameSize(width, height);
   }
 }
 

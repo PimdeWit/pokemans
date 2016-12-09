@@ -33,7 +33,7 @@ class MapController {
       tileObject.width = MapConfig.TILESIZE;
       tileObject.height = MapConfig.TILESIZE;
 
-      let tile = new Tile(tileObject);
+      let tile = new Tile(this.canvas.stage, tileObject);
       this.tileArray.push(tile);
     }.bind(this));
 
