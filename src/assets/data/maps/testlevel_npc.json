@@ -1,0 +1,18 @@
+[
+  {
+    "keyid": "joey",
+    "properties": {
+      "name": "Youngster Joey",
+      "message": "Check back later!",
+      "sprite": "debug-player_static.png"
+    }
+  },
+  {
+    "keyid": "bat",
+    "properties": {
+      "name": "Lil Zubat",
+      "message": "Check back later!",
+      "sprite": "debug-player_static.png"
+    }
+  }
+]

@@ -1,35 +1,53 @@
 const timerCount = 300;
 const mapSize = 1920;
 const tileSize = 32;
+const texturePath = 'assets/textures/debug';
+const dataPath = 'assets/data/maps';
 const playerVelocity = 106.666667;
 
 class Main extends Phaser.State {
 
   preload() {
-    this.game.load.tilemap('debug-map', 'assets/data/maps/debug.csv', null, Phaser.Tilemap.CSV); // the map layout
-    this.game.load.image('debug-tiles','assets/textures/debug/tiles.png'); // the spritesheet for the map layout
+    this.npc = {};
+    this.game.load.tilemap('debug-map', `${dataPath}/debug.csv`, null, Phaser.Tilemap.CSV); // the map layout
+    this.game.load.image('debug-tiles', `${texturePath}/tiles.png`); // the spritesheet for the map layout
 
-    this.game.load.image('debug-background','assets/textures/debug/debug-grid-1920x1920.png');
+    this.game.load.image('debug-background', `${texturePath}/debug-grid-1920x1920.png`);
+    this.game.load.spritesheet('player', `${texturePath}/debug-player.png`, 32, 32, 30);
 
-    this.game.load.spritesheet('player', 'assets/textures/debug/debug-player.png', 32, 32, 30);
+    this.game.load.json('npc-data', `${dataPath}/testlevel_npc.json`);
+    // this.game.load.image('npcTexture', 'assets/pics/ra_einstein.png');
+
+    this.game.load.atlas('npc-texture', `${texturePath}/npc/debug_npc.png`, `${texturePath}/npc/debug_npc.json`);
+  }
+
+  fetchMapJson(url) {
+    return fetch(url)
+      .then(function(response) {
+        return response.json()
+      })
   }
 
   create() {
+    console.log('main started');
     this.counter = 0;
-    this.npc = {};
+
+    this.npcData = this.game.cache.getJSON('npc-data');
 
     // Add the background
     this.game.add.tileSprite(0, 0, mapSize, mapSize, 'debug-background');
     this._createMap();
     this._createLayer();
     this._createPlayer();
+    this.addNPCs();
     this._debugText();
+    this.addEventListeners();
 
-    this.npc.joey = new Phaser.Rectangle(this.game.world.centerX - 128, this.game.world.centerY - 128, 32, 32);
-    this.npc.joey.name = 'Youngster Joey';
-    this.npc.joey.message = 'Try going north';
-    this.game.physics.enable(this.npc.joey, Phaser.Physics.ARCADE);
+    this.game.camera.follow(this.player, Phaser.Camera.FOLLOW_LOCKON, 0.025, 0.025);
+    this.game.time.events.loop(timerCount, this.nextStep, this);
+  }
 
+  addEventListeners() {
     this.cursors = {
       up: this.game.input.keyboard.addKey(Phaser.Keyboard.W),
       down: this.game.input.keyboard.addKey(Phaser.Keyboard.S),
@@ -39,9 +57,16 @@ class Main extends Phaser.State {
 
     this.actionKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     this.actionKey.onDown.add(this.checkAction, this);
+  }
 
-    this.game.camera.follow(this.player, Phaser.Camera.FOLLOW_LOCKON, 0.025, 0.025);
-    this.game.time.events.loop(timerCount, this.nextStep, this);
+  addNPCs() {
+    this.npcData.forEach(function(npc, index) {
+      this.npc[npc.keyid] = this.game.add.sprite(640 + (160 * index), 640, 'npc-texture');
+      this.npc[npc.keyid].frameName = `${npc.keyid}.png`;
+      this.npc[npc.keyid].name = npc.properties.name;
+      this.npc[npc.keyid].message = npc.properties.message;
+      this.game.physics.enable(this.npc[npc.keyid], Phaser.Physics.ARCADE);
+    }.bind(this));
   }
 
   checkAction() {
@@ -59,7 +84,7 @@ class Main extends Phaser.State {
 
         let textbox = document.createElement('div');
         textbox.classList.add('textbox');
-        textbox.innerHTML = `<p><small>${npc.name}</small></p><p class="textbox__paragraph">Hi, I'm ${name}<br>${npc.message}</p>`;
+        textbox.innerHTML = `<header class="textbox__header"><p class="textbox__speaker">${npc.name}</p></header><p class="textbox__paragraph">Hi, I'm ${name}<br>${npc.message}</p>`;
         document.querySelector('.textwrapper').append(textbox);
 
         this.textboxActive = true;
@@ -93,7 +118,7 @@ class Main extends Phaser.State {
     // Define which tiles are collidable
     this.map.setCollisionByExclusion([0]);
     // Check which tiles are collidable
-    this.layer.debug = true;
+    // this.layer.debug = true;
   }
 
   _createPlayer() {

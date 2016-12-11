@@ -8,11 +8,10 @@ class GameTitle extends Phaser.State {
 
     setTimeout(function() {
       this.startGame();
-    }.bind(this), 1000);
+    }.bind(this), 500);
   }
 
   startGame() {
-    console.log('trying to start main');
     this.game.state.start('Main');
   }
 
