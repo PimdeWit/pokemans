@@ -1,11 +1,11 @@
 class Boot extends Phaser.State {
 
   preload() {
-
+    console.log('running boot');
   }
 
   create() {
-    this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    this.scale.scaleMode = Phaser.ScaleManager.RESIZE;
     this.game.state.start('Preload');
   }
 
