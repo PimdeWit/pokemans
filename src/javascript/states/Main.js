@@ -16,7 +16,6 @@ class Main extends Phaser.State {
     this.game.load.spritesheet('player', `${texturePath}/debug-player.png`, 32, 32, 30);
 
     this.game.load.json('npc-data', `${dataPath}/testlevel_npc.json`);
-    // this.game.load.image('npcTexture', 'assets/pics/ra_einstein.png');
 
     this.game.load.atlas('npc-texture', `${texturePath}/npc/debug_npc.png`, `${texturePath}/npc/debug_npc.json`);
   }
@@ -29,13 +28,13 @@ class Main extends Phaser.State {
   }
 
   create() {
-    console.log('main started');
     this.counter = 0;
 
     this.npcData = this.game.cache.getJSON('npc-data');
 
     // Add the background
-    this.game.add.tileSprite(0, 0, mapSize, mapSize, 'debug-background');
+    this.background = this.game.add.tileSprite(0, 0, mapSize, mapSize, 'debug-background');
+    this._setupTransition();
     this._createMap();
     this._createLayer();
     this._createPlayer();
@@ -65,6 +64,7 @@ class Main extends Phaser.State {
       this.npc[npc.keyid].frameName = `${npc.keyid}.png`;
       this.npc[npc.keyid].name = npc.properties.name;
       this.npc[npc.keyid].message = npc.properties.message;
+      this.npc[npc.keyid].creatures = npc.properties.creatures;
       this.game.physics.enable(this.npc[npc.keyid], Phaser.Physics.ARCADE);
     }.bind(this));
   }
@@ -76,6 +76,10 @@ class Main extends Phaser.State {
       let npc = this.npc[name];
       if (Phaser.Math.distance(this.player.x, this.player.y, npc.x, npc.y) <= tileSize * 2) {
         if (this.textbox) {
+          document.querySelector('.battle.overlay').classList.remove('active');
+          this.isInBattle = false;
+          this.hideTransition(this.transitionSlices);
+
           this.textbox.remove();
           this._toggleControls();
           this.textboxActive = false;
@@ -87,6 +91,8 @@ class Main extends Phaser.State {
         textbox.innerHTML = `<header class="textbox__header"><p class="textbox__speaker">${npc.name}</p></header><p class="textbox__paragraph">Hi, I'm ${name}<br>${npc.message}</p>`;
         document.querySelector('.textwrapper').append(textbox);
 
+        this.engageBattle(this.npc.joey);
+
         this.textboxActive = true;
       }
     }.bind(this));
@@ -94,7 +100,71 @@ class Main extends Phaser.State {
     if (this.textboxActive) {
       this._toggleControls();
     }
+  }
 
+  _setupTransition() {
+    let motion = { x: 0};
+    let tween = this.game.add.tween(motion).to( { x: 320 }, 900, 'Bounce.easeInOut', true, 0, -1, true);
+    this.waveform = tween.generateData(200);
+    this.transitionSlices = [];
+
+    let textureWidth = this.background.width;
+    let textureHeight = this.background.height;
+
+    let sliceHeight = 16;
+
+    for (let slice = 0; slice < Math.floor(textureHeight / sliceHeight); slice++) {
+      let star = this.game.add.sprite(400, 0 + (slice * sliceHeight), this.background.key);
+      star.crop(new Phaser.Rectangle(0, slice * sliceHeight, textureWidth, sliceHeight));
+      star.ox = star.x;
+      star.cx = this.game.math.wrap(slice * 2, 0, this.waveform.length - 1);
+      star.anchor.set(0.25);
+      this.transitionSlices.push(star);
+    }
+
+    // this.isInBattle = true;
+    this.hideTransition(this.transitionSlices);
+  }
+
+  hideTransition(sprites) {
+    sprites.forEach(function(sprite, i) {
+      sprite.alpha = 0;
+    });
+  }
+
+  showTransition(sprites) {
+    this.game.camera.shake(0.01, 500);
+    sprites.forEach(function(sprite, i) {
+      sprite.alpha = 1;
+    });
+  }
+
+  transitionToBattle() {
+
+  }
+
+  engageBattle(enemy) {
+    let parent = document.querySelector('.battle.overlay');
+    let enemyNameContainer = document.querySelector('.battle__enemy__name');
+    let enemyCreaturesContainer = document.querySelector('.battle__enemy .battle__list');
+    let enemySprite = document.querySelector('.battle__enemy .battle__sprite');
+    enemyNameContainer.innerHTML = enemy.name;
+
+    enemy.creatures.forEach(function(creature, i) {
+      console.log(creature);
+      let a = enemyCreaturesContainer.children[i];
+      a.classList.add('active');
+      a.innerHTML = creature.name;
+    }.bind(this));
+
+    enemySprite.src = `${texturePath}/creature/${enemy.creatures[0].name}.png`;
+
+    setTimeout(function() {
+      parent.classList.add('active');
+    }, 2500);
+
+    this.isInBattle = true;
+    this.showTransition(this.transitionSlices);
   }
 
   _toggleControls() {
@@ -137,8 +207,18 @@ class Main extends Phaser.State {
 
   update() {
     this.game.physics.arcade.collide(this.player, this.layer, this.collisionHandler, null, this);
+
+    if (this.isInBattle) {
+      for (let i = 0, len = this.transitionSlices.length; i < len; i++) {
+        this.transitionSlices[i].x = this.transitionSlices[i].ox + this.waveform[this.transitionSlices[i].cx].x;
+        this.transitionSlices[i].cx++;
+        if (this.transitionSlices[i].cx > this.waveform.length - 1) {
+          this.transitionSlices[i].cx = 0;
+        }
+      }
+    }
   }
-  
+
   nextStep() {
 
     this.updateCounter(this.counter++);
@@ -152,23 +232,20 @@ class Main extends Phaser.State {
     this.updateAllowed = false;
 
     if (this.cursors.up.isDown) {
-      // this.player.y = Phaser.Math.snapTo(this.player.y - tileSize, tileSize);
       this.player.body.velocity.y = -playerVelocity;
       this.player.play('up');
     } else if (this.cursors.down.isDown) {
-      // this.player.y = Phaser.Math.snapTo(this.player.y + tileSize, tileSize);
       this.player.body.velocity.y = playerVelocity;
       this.player.play('down');
     } else if (this.cursors.left.isDown) {
-      // this.player.x = Phaser.Math.snapTo(this.player.x - tileSize, tileSize);
       this.player.body.velocity.x = -playerVelocity;
       this.player.play('left');
     } else if (this.cursors.right.isDown) {
-      // this.player.x = Phaser.Math.snapTo(this.player.x + tileSize, tileSize);
       this.player.body.velocity.x = playerVelocity;
       this.player.play('right');
     } else {
       this.player.animations.stop();
+      this.player.frame = 0;
     }
   }
 
@@ -177,10 +254,6 @@ class Main extends Phaser.State {
   }
 
   render() {
-    Object.keys(this.npc).forEach(function(npc) {
-      this.game.debug.geom(this.npc[npc], '#0fffff');
-    }.bind(this));
-
     this.game.debug.cameraInfo(this.game.camera, tileSize, tileSize);
     this.game.debug.spriteCoords(this.player, tileSize, 500);
   }

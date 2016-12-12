@@ -22,7 +22,7 @@ canvas {
   position: absolute;
   width: 100%;
   bottom: 0;
-  z-index: 1;
+  z-index: 2;
 }
 
 .textbox {
@@ -51,4 +51,43 @@ canvas {
   margin: 0;
   font-size: 32px;
   font-weight: 100;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  background-color: rgba(0,0, 0, .6);
+  z-index: 1;
+}
+
+.battle.overlay {
+  padding: 5vw;
+  visibility: hidden;
+}
+
+.battle.overlay.active {
+  visibility: visible;
+}
+
+.battle__wrapper {
+  width: 100%;
+  background: red;
+  height: 100vh;
+  padding: 5vw;
+}
+
+.battle__main {
+  background-color: white;
+}
+
+.battle__header {
+  color: white;
 }

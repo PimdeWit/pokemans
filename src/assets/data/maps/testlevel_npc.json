@@ -4,7 +4,14 @@
     "properties": {
       "name": "Youngster Joey",
       "message": "Check back later!",
-      "sprite": "debug-player_static.png"
+      "sprite": "debug-player_static.png",
+      "creatures": [
+        {
+          "name": "chormonder",
+          "level": 6,
+          "health": 24
+        }
+      ]
     }
   },
   {
