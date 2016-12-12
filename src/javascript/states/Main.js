@@ -1,9 +1,9 @@
 const timerCount = 300;
-const mapSize = 1920;
-const tileSize = 32;
+const mapSize = 3840;
+const tileSize = 64;
 const texturePath = 'assets/textures/debug';
 const dataPath = 'assets/data/maps';
-const playerVelocity = 106.666667;
+const playerVelocity = 213.33333334;
 
 class Main extends Phaser.State {
 
@@ -13,7 +13,7 @@ class Main extends Phaser.State {
     this.game.load.image('debug-tiles', `${texturePath}/tiles.png`); // the spritesheet for the map layout
 
     this.game.load.image('debug-background', `${texturePath}/debug-grid-1920x1920.png`);
-    this.game.load.spritesheet('player', `${texturePath}/debug-player.png`, 32, 32, 30);
+    this.game.load.spritesheet('player', `${texturePath}/debug-player.png`, tileSize, tileSize, 30);
 
     this.game.load.json('npc-data', `${dataPath}/testlevel_npc.json`);
 
@@ -60,12 +60,13 @@ class Main extends Phaser.State {
 
   addNPCs() {
     this.npcData.forEach(function(npc, index) {
-      this.npc[npc.keyid] = this.game.add.sprite(640 + (160 * index), 640, 'npc-texture');
+      this.npc[npc.keyid] = this.game.add.sprite(1280 + (320 * index), 1280, 'npc-texture');
       this.npc[npc.keyid].frameName = `${npc.keyid}.png`;
       this.npc[npc.keyid].name = npc.properties.name;
       this.npc[npc.keyid].message = npc.properties.message;
       this.npc[npc.keyid].creatures = npc.properties.creatures;
       this.game.physics.enable(this.npc[npc.keyid], Phaser.Physics.ARCADE);
+      this.npc[npc.keyid].body.immovable = true;
     }.bind(this));
   }
 
@@ -207,6 +208,10 @@ class Main extends Phaser.State {
 
   update() {
     this.game.physics.arcade.collide(this.player, this.layer, this.collisionHandler, null, this);
+
+    Object.keys(this.npc).forEach(function(npc) {
+      this.game.physics.arcade.collide(this.player, this.npc[npc], this.collisionHandler, null, this);
+    }.bind(this));
 
     if (this.isInBattle) {
       for (let i = 0, len = this.transitionSlices.length; i < len; i++) {

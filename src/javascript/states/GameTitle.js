@@ -1,9 +1,8 @@
 class GameTitle extends Phaser.State {
 
   create() {
-    this.game.add.sprite(
-      (this.game.width / 2) - (this.game.cache.getImage('splash-title').naturalWidth / 2),
-      (this.game.height / 2) - this.game.cache.getImage('splash-title').naturalHeight, 'splash-title');
+    this.title = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'splash-title');
+    this.title.anchor.x = this.title.anchor.y = 0.5;
     this.game.stage.backgroundColor = 0x226db7;
 
     setTimeout(function() {
