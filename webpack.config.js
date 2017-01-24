@@ -18,5 +18,10 @@ module.exports = {
       }
     ]
   },
-  plugins: [new HtmlWebpackPlugin()]
+  plugins: [
+    new HtmlWebpackPlugin({
+      title: 'Custom template',
+      template: './src/index.html',
+    })
+  ]
 }

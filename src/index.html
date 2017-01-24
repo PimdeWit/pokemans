@@ -3,8 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <title>Pokemans</title>
+  <link rel="stylesheet" href="./css/main.css">
 </head>
 <body>
-  <script src="javascript/bundle.js"></script>
+  <div class="textwrapper"></div>
+  <div class="battle overlay">
+    <header class="battle__header">
+      <h3 class="battle__header__title">BATTLE</h3>
+    </header>
+    <main class="battle__main">
+      <div class="battle__enemy">
+        <h3 class="battle__enemy__name"></h3>
+        <hr>
+        <ul class="battle__list">
+          <li class="battle__listitem"></li>
+          <li class="battle__listitem"></li>
+          <li class="battle__listitem"></li>
+          <li class="battle__listitem"></li>
+          <li class="battle__listitem"></li>
+          <li class="battle__listitem"></li>
+        </ul>
+        <img class="battle__sprite" src="" alt="">
+      </div>
+    </main>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.js"></script>
 </body>
 </html>
