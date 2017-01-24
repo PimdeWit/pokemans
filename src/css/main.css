@@ -112,7 +112,6 @@ canvas {
 }
 
 .battle__sprite {
-  position: absolute;
   right: 0;
   top: 0;
   width: 256px;

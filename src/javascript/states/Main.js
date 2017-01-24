@@ -22,7 +22,7 @@ class Main extends Phaser.State {
 
   fetchMapJson(url) {
     return fetch(url)
-      .then(function(response) {
+      .then((response) => {
         return response.json()
       })
   }
@@ -38,12 +38,12 @@ class Main extends Phaser.State {
     this._createMap();
     this._createLayer();
     this._createPlayer();
-    this.addNPCs();
+    this._addNPCs();
     this._debugText();
     this.addEventListeners();
 
     this.game.camera.follow(this.player, Phaser.Camera.FOLLOW_LOCKON, 0.025, 0.025);
-    this.game.time.events.loop(timerCount, this.nextStep, this);
+    this.game.time.events.loop(timerCount, this.triggerStep, this);
   }
 
   addEventListeners() {
@@ -58,8 +58,8 @@ class Main extends Phaser.State {
     this.actionKey.onDown.add(this.checkAction, this);
   }
 
-  addNPCs() {
-    this.npcData.forEach(function(npc, index) {
+  _addNPCs() {
+    this.npcData.forEach((npc, index) => {
       this.npc[npc.keyid] = this.game.add.sprite(1280 + (320 * index), 1280, 'npc-texture');
       this.npc[npc.keyid].frameName = `${npc.keyid}.png`;
       this.npc[npc.keyid].name = npc.properties.name;
@@ -67,13 +67,14 @@ class Main extends Phaser.State {
       this.npc[npc.keyid].creatures = npc.properties.creatures;
       this.game.physics.enable(this.npc[npc.keyid], Phaser.Physics.ARCADE);
       this.npc[npc.keyid].body.immovable = true;
-    }.bind(this));
+    });
   }
 
+  // TODO: Needs big refactoring, what a fucking mess.
   checkAction() {
     this.textbox = document.querySelector('.textbox');
 
-    Object.keys(this.npc).forEach(function(name) {
+    Object.keys(this.npc).forEach((name) => {
       let npc = this.npc[name];
       if (Phaser.Math.distance(this.player.x, this.player.y, npc.x, npc.y) <= tileSize * 2) {
         if (this.textbox) {
@@ -96,13 +97,16 @@ class Main extends Phaser.State {
 
         this.textboxActive = true;
       }
-    }.bind(this));
+    });
 
     if (this.textboxActive) {
       this._toggleControls();
     }
   }
 
+  /**
+   * Prepares the battle background effect.
+   */
   _setupTransition() {
     let motion = { x: 0};
     let tween = this.game.add.tween(motion).to( { x: 320 }, 900, 'Bounce.easeInOut', true, 0, -1, true);
@@ -123,55 +127,53 @@ class Main extends Phaser.State {
       this.transitionSlices.push(star);
     }
 
-    // this.isInBattle = true;
     this.hideTransition(this.transitionSlices);
   }
 
   hideTransition(sprites) {
-    sprites.forEach(function(sprite, i) {
+    sprites.forEach((sprite) => {
       sprite.alpha = 0;
     });
   }
 
   showTransition(sprites) {
     this.game.camera.shake(0.01, 500);
-    sprites.forEach(function(sprite, i) {
+    sprites.forEach((sprite) => {
       sprite.alpha = 1;
     });
   }
 
-  transitionToBattle() {
-
-  }
-
   engageBattle(enemy) {
-    let parent = document.querySelector('.battle.overlay');
-    let enemyNameContainer = document.querySelector('.battle__enemy__name');
-    let enemyCreaturesContainer = document.querySelector('.battle__enemy .battle__list');
-    let enemySprite = document.querySelector('.battle__enemy .battle__sprite');
-    enemyNameContainer.innerHTML = enemy.name;
+    console.warn('BATTLE ENGAGED !1!!!');
 
-    enemy.creatures.forEach(function(creature, i) {
-      console.log(creature);
-      let a = enemyCreaturesContainer.children[i];
-      a.classList.add('active');
-      a.innerHTML = creature.name;
-    }.bind(this));
-
-    enemySprite.src = `${texturePath}/creature/${enemy.creatures[0].name}.png`;
-
-    setTimeout(function() {
-      parent.classList.add('active');
-    }, 2500);
+    this.prepareBattleDom(enemy);
 
     this.isInBattle = true;
     this.showTransition(this.transitionSlices);
   }
 
+  prepareBattleDom(enemy) {
+    let parent = document.querySelector('.battle.overlay');
+    let enemyNameContainer = document.querySelector('.battle__enemy__name');
+    let enemyCreaturesContainer = document.querySelector('.battle__enemy .battle__list');
+    let enemySprite = document.querySelector('.battle__enemy .battle__sprite');
+
+    enemy.creatures.forEach((creature, i) => {
+      console.log(creature);
+      let creatureElement = enemyCreaturesContainer.children[i];
+      creatureElement.classList.add('active');
+      creatureElement.innerText = creature.name;
+    });
+
+    enemyNameContainer.innerText = enemy.name;
+    enemySprite.src = `${texturePath}/creature/${enemy.creatures[0].name}.png`;
+    parent.classList.add('active');
+  }
+
   _toggleControls() {
-    Object.keys(this.cursors).forEach(function(direction) {
+    Object.keys(this.cursors).forEach((direction) => {
       this.cursors[direction].enabled = !this.cursors[direction].enabled;
-    }.bind(this));
+    });
   }
 
   _createMap() {
@@ -189,7 +191,7 @@ class Main extends Phaser.State {
     // Define which tiles are collidable
     this.map.setCollisionByExclusion([0]);
     // Check which tiles are collidable
-    // this.layer.debug = true;
+    this.layer.debug = true;
   }
 
   _createPlayer() {
@@ -207,24 +209,30 @@ class Main extends Phaser.State {
   }
 
   update() {
+    // Check if player is colliding with 'wall'.
     this.game.physics.arcade.collide(this.player, this.layer, this.collisionHandler, null, this);
 
-    Object.keys(this.npc).forEach(function(npc) {
+    // Check if player is colliding with 'npc'.
+    Object.keys(this.npc).forEach((npc) => {
       this.game.physics.arcade.collide(this.player, this.npc[npc], this.collisionHandler, null, this);
-    }.bind(this));
+    });
 
     if (this.isInBattle) {
-      for (let i = 0, len = this.transitionSlices.length; i < len; i++) {
-        this.transitionSlices[i].x = this.transitionSlices[i].ox + this.waveform[this.transitionSlices[i].cx].x;
-        this.transitionSlices[i].cx++;
-        if (this.transitionSlices[i].cx > this.waveform.length - 1) {
-          this.transitionSlices[i].cx = 0;
-        }
+      this.drawBattleEffect();
+    }
+  }
+
+  drawBattleEffect() {
+    for (let i = 0, len = this.transitionSlices.length; i < len; i++) {
+      this.transitionSlices[i].x = this.transitionSlices[i].ox + this.waveform[this.transitionSlices[i].cx].x;
+      this.transitionSlices[i].cx++;
+      if (this.transitionSlices[i].cx > this.waveform.length - 1) {
+        this.transitionSlices[i].cx = 0;
       }
     }
   }
 
-  nextStep() {
+  triggerStep() {
 
     this.updateCounter(this.counter++);
 
@@ -234,8 +242,11 @@ class Main extends Phaser.State {
     this.player.x = Phaser.Math.snapTo(this.player.x, tileSize);
     this.player.y = Phaser.Math.snapTo(this.player.y, tileSize);
 
-    this.updateAllowed = false;
+    this.moveToActiveDirection();
+  }
 
+  // How do i make this cleaner?
+  moveToActiveDirection() {
     if (this.cursors.up.isDown) {
       this.player.body.velocity.y = -playerVelocity;
       this.player.play('up');
