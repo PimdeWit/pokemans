@@ -2,7 +2,7 @@ const initialGame = {
   WIDTH: '100',
   HEIGHT: '100',
   AUTORESIZE: false,
-  ANTIALIAS: true,
+  ANTIALIAS: false,
   TRANSPARENT: false,
   ROUND_PIXELS: true,
   BACKGROUND: 0xff0000

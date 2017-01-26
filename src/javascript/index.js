@@ -7,7 +7,7 @@ import GameOver from './states/GameOver';
 const initialGame = {
   WIDTH: '100',
   HEIGHT: '100',
-  ANTIALIAS: true,
+  ANTIALIAS: false,
   TRANSPARENT: false,
 };
 

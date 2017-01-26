@@ -7,6 +7,7 @@ class NPCs {
 
     npcData.forEach((npc, index) => {
       this.character[npc.keyid] = this.game.add.sprite(1280 + (320 * index), 1280, 'npc-texture');
+      this.character[npc.keyid].scale.x = this.character[npc.keyid].scale.y = this.game.config.sizes.tileScale
       this.character[npc.keyid].frameName = `${npc.keyid}.png`;
       this.character[npc.keyid].name = npc.properties.name;
       this.character[npc.keyid].message = npc.properties.message;

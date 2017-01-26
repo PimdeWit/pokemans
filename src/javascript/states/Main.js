@@ -10,8 +10,9 @@ class Main extends Phaser.State {
     this.game.config = {
       stepTimerInterval: 300,
       sizes: {
-        map: 3840,
-        tile: 64
+        tile: 32,
+        tileScale: 1,
+        map: 1920
       },
       paths: {
         textures: 'assets/textures/debug',
@@ -54,7 +55,7 @@ class Main extends Phaser.State {
 
     Object.keys(this.npc).forEach((name) => {
       let npc = this.npc[name];
-      if (Phaser.Math.distance(this.player.instance.x, this.player.instance.y, npc.x, npc.y) <= this.game.config.sizes.tile * 2) {
+      if (Phaser.Math.distance(this.player.instance.x, this.player.instance.y, npc.x, npc.y) <= (this.game.config.sizes.tile * this.game.config.sizes.tileScale) * 2) {
         if (this.textbox) {
           document.querySelector('.battle.overlay').classList.remove('active');
           this.isInBattle = false;
@@ -86,7 +87,7 @@ class Main extends Phaser.State {
   _setupTransition() {
     let motion = {x: 0};
     let bg = this.map.background;
-    let tween = this.game.add.tween(motion).to({x: (this.game.config.sizes.tile / 2) * 10}, 900, 'Bounce.easeInOut', true, 0, -1, true);
+    let tween = this.game.add.tween(motion).to({x: ((this.game.config.sizes.tile * this.game.config.sizes.tileScale) / 2) * 10}, 900, 'Bounce.easeInOut', true, 0, -1, true);
     this.waveform = tween.generateData(200);
     this.transitionSlices = [];
 
@@ -163,6 +164,7 @@ class Main extends Phaser.State {
 
   collisionHandler() {
     console.log('they are totally touching');
+    this.player.snapToGrid();
   }
 
   update() {
@@ -188,8 +190,8 @@ class Main extends Phaser.State {
   }
 
   render() {
-    this.game.debug.cameraInfo(this.game.camera, this.game.config.sizes.tile, this.game.config.sizes.tile);
-    this.game.debug.spriteCoords(this.player.instance, this.game.config.sizes.tile, 500);
+    this.game.debug.cameraInfo(this.game.camera, (this.game.config.sizes.tile * this.game.config.sizes.tileScale), (this.game.config.sizes.tile * this.game.config.sizes.tileScale));
+    this.game.debug.spriteCoords(this.player.instance, (this.game.config.sizes.tile * this.game.config.sizes.tileScale), 500);
   }
 }
 

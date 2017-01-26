@@ -3,7 +3,8 @@ class Player {
   constructor(game, spawn, sprite) {
     this.game = game;
 
-    this.velocity = 213.33333334;
+    // this.velocity = 213.33333334;
+    this.velocity = 106.6666667 * this.game.config.sizes.tileScale;
 
     // The player position on the map.
     this.position = spawn || {
@@ -12,6 +13,7 @@ class Player {
     };
 
     this.instance = this.game.add.sprite(this.position.x, this.position.y, sprite);
+    this.instance.scale.x = this.instance.scale.y = this.game.config.sizes.tileScale;
     this.instance.anchor.x = this.instance.anchor.y = 0;
 
     this.game.physics.enable(this.instance, Phaser.Physics.ARCADE);
@@ -32,22 +34,22 @@ class Player {
       y: position.y || this.position.y
     }
 
-    this._movePlayer();
+    this._teleportPlayer();
   }
 
-  _movePlayer() {
-    this.instance.x = Phaser.Math.snapTo(this.position.x, this.game.config.sizes.tile);
-    this.instance.y = Phaser.Math.snapTo(this.position.y, this.game.config.sizes.tile);
+  _teleportPlayer() {
+    this.instance.x = Phaser.Math.snapTo(this.position.x, (this.game.config.sizes.tile * this.game.config.sizes.tileScale));
+    this.instance.y = Phaser.Math.snapTo(this.position.y, (this.game.config.sizes.tile * this.game.config.sizes.tileScale));
   }
 
-  snapToGrid(gridCellSize) {
+  snapToGrid(gridCellSize = (this.game.config.sizes.tile * this.game.config.sizes.tileScale)) {
     this.instance.body.velocity.set(0);
     this.instance.x = Phaser.Math.snapTo(this.instance.x, gridCellSize);
     this.instance.y = Phaser.Math.snapTo(this.instance.y, gridCellSize);
   }
 
   moveToActiveDirection(cursors) {
-    this.snapToGrid(this.game.config.sizes.tile);
+    this.snapToGrid((this.game.config.sizes.tile * this.game.config.sizes.tileScale));
 
     if (cursors.up.isDown || cursors.upArrow.isDown) {
       this.instance.body.velocity.y = -this.velocity;
